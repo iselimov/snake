@@ -1,0 +1,42 @@
+<html>
+<head>
+</head>
+<body style="background:white">
+	<canvas id="field" style="position:absolute; z-index:1;"></canvas>
+	<canvas id="snake" style="position:absolute; z-index:2"></canvas>
+	
+<script src="js/fieldManager.js"></script>	
+<script src="js/snake.js"></script>	
+<script src="js/snakeManager.js"></script>
+<script>
+		
+		'use strict'
+		var gridSize = {
+			width: 50,
+			height: 50
+		};
+		var screenSize = {
+			width: screen.availWidth,
+			height: screen.availHeight
+		};
+		
+		var fieldMng = new FieldManager(screen.availWidth, screen.availHeight);
+		fieldMng.drawGrid(50, 50);
+		
+		gameContext.beginPath();
+		gameContext.rect(700, 50, 50, 50);
+		gameContext.fillStyle = 'yellow';
+		gameContext.fill();
+		gameContext.lineWidth = 7;
+		gameContext.strokeStyle = 'black';
+		gameContext.stroke();
+		
+
+		var snake = new Snake(500, 500, 50, 50, 1, 3);
+		var snakeMng = new SnakeManager(snake);
+		window.onkeydown = game.onKeyDown;
+		snakeMng.start();
+		window.onclick = game.stop;
+</script>
+</body>
+</html>
