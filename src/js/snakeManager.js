@@ -64,16 +64,17 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
 		return true;
 	}
 	return false;
-};		
+};
 SnakeManager.prototype.checkBorder = function() {
-	if (this.snake.coords[0].x > window.screen.availWidth + 50) {
-		this.snake.posX = 0;
-	} else if (this.snake.posX < -50) {
-		this.snake.posX = window.screen.availWidth;
-	} else if (this.snake.posY > window.screen.availHeight + 50) {
-		this.snake.posY = 0;
-	} else if (this.snake.posY < -50) {
-		this.snake.posY = window.screen.availHeight;		
+	var headPos = this.snake.getHeadPosition();
+	if (headPos.x > window.screen.availWidth + 50) {
+		this.snake.setHeadPosition(0, headPos.y);
+	} else if (headPos.posX < -50) {
+		this.snake.setHeadPosition(window.screen.availWidth, headPos.y);
+	} else if (headPos.posY > window.screen.availHeight + 50) {
+		this.snake.setHeadPosition(headPos.x, 0);
+	} else if (headPos.posY < -50) {
+		this.snake.setHeadPosition(headPos.x, window.screen.availHeight);
 	}
 };
 SnakeManager.prototype.refresh = function() {
