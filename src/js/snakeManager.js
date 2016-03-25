@@ -7,52 +7,55 @@ var KEY_CODE = {
   DOWN: 40
 };
 
-var SnakeManager = function(snake) {
+var SnakeManager = function(snake, screenWidth, screenHeight) {
 	this.snake = snake;
-	this.refresh();
-	this.refreshInterval = 1;
+	this.refresh(snake.snakeDirectional);
+	this.refreshInterval = 2000;
 	window.onkeydown = this.onKeyDown;
+	
+	var snakeCtx = document.getElementById("snake").getContext("2d");
+	snakeCtx.canvas.width = screenWidth;
+	snakeCtx.canvas.height = screenHeight;
 };
-SnakeManager.prototype.start = function(move) {
-	this.intervalId = setInterval(function() {
-		if (move) {
-			move(this.snake);
-		} else {
-			this.keyPressedCode = KEY_CODE.DOWN;
-			this.snake.moveDown();	
-		}
-		this.snakeManager.refresh();
+
+SnakeManager.prototype.start = function(snakeDirectional) {
+	this.intervalId = setInterval(function(snakeManager) {
+	   this.snakeMng.refresh(this.snake.snakeDirectional);
 	}, this.refreshInterval);
 };
-SnakeManager.prototype.restart = function(move) {
+
+SnakeManager.prototype.restart = function(snakeDirectional) {
 	if (this.intervalId) {
 		clearInterval(this.intervalId);
 	}
-	this.start(move);		
-};		
+	this.start(snakeDirectional);		
+};
+		
 SnakeManager.prototype.stop = function() {
 	clearInterval(snakeManager.intervalId);
 };
+
 SnakeManager.prototype.onKeyDown = function(event) {
-	var move;
-	var isOpposeKeyPressed = this.snakeManager.isOpposeKeyPressed(event.keyCode);
+	var snakeDirectional;
+	var isOpposeKeyPressed = this.snakeMng.isOpposeKeyPressed(event.keyCode);
 	if (!isOpposeKeyPressed) {
 		if (event.keyCode === KEY_CODE.LEFT) {
-			move = this.snake.moveLeft;
+			snakeDirectional = this.snake.SNAKE_POS.LEFT;
 		} else if (event.keyCode === KEY_CODE.RIGHT) {
-			move = this.snake.moveRight;
+			snakeDirectional = this.snake.SNAKE_POS.RIGHT;
 		} else if (event.keyCode === KEY_CODE.UP) {
-			move = this.snake.moveUp;
+			snakeDirectional = this.snake.SNAKE_POS.UP;
 		} else if (event.keyCode === KEY_CODE.DOWN) {
-			move = this.snake.moveDown;
+			snakeDirectional = this.snake.SNAKE_POS.DOWN;
 		} else {
 			return;
 		}
-		this.snakeManager.keyPressedCode = event.keyCode;
-		this.snakeManager.restart(move);
+		this.snakeMng.keyPressedCode = event.keyCode;
+		//this.snakeManager.restart(snakeDirectional);
 	}
-	this.snakeManager.refresh();
+	this.snakeMng.refresh(snakeDirectional);
 };
+
 SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
 	if (currentCode === KEY_CODE.LEFT && this.keyPressedCode === KEY_CODE.RIGHT) {
 		return true;
@@ -65,6 +68,7 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
 	}
 	return false;
 };
+
 SnakeManager.prototype.checkBorder = function() {
 	var headPos = this.snake.getHeadPosition();
 	if (headPos.x > window.screen.availWidth + 50) {
@@ -77,18 +81,20 @@ SnakeManager.prototype.checkBorder = function() {
 		this.snake.setHeadPosition(headPos.x, window.screen.availHeight);
 	}
 };
-SnakeManager.prototype.refresh = function() {
-	this.checkBorder();
-	this.snake.transform()
+
+SnakeManager.prototype.refresh = function(snakeDirectional) {
+	//this.checkBorder();
+	this.snake.transform(snakeDirectional);
+	var snakeContext = document.getElementById("snake").getContext("2d");
 	
-	var snake = document.getElementById("snake");
-	var snakeContext = snake.getContext("2d");
-		
-	snakeContext.beginPath();
-	snakeContext.rect(this.snake.posX, 50, 50);
-	snakeContext.fillStyle = 'yellow';
-	snakeContext.fill();
+	snakeContext.fillStyle = 'green';
+
 	snakeContext.lineWidth = 7;
-	snakeContext.strokeStyle = 'black';
-	snakeContext.stroke();
+	snakeContext.strokeStyle = 'yellow';
+	this.snake.getCoords().forEach(function(coord) {
+		snakeContext.rect(coord.x, coord.y, snake.gridWidth, snake.gridHeight);
+		snakeContext.fill();
+		snakeContext.stroke();
+	});
+	
 };

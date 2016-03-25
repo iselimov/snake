@@ -5,10 +5,9 @@ var FieldManager = function(screenWidth, screenHeight) {
 	this.screenHeight = screenHeight;	
 };
 FieldManager.prototype.drawGrid = function(gridWidth, gridHeight) {
-	var fieldCanvas = document.getElementById("field");
-	var fieldContext = fieldCanvas.getContext("2d");
-	fieldContext.canvas.width = screenSize.width;
-	fieldContext.canvas.height = screenSize.height;
+	var fieldContext = document.getElementById("field").getContext("2d");;
+	fieldContext.canvas.width = this.screenWidth;
+	fieldContext.canvas.height = this.screenHeight;
 
 	for (var x = 0.5; x < this.screenWidth + 0.5; x += gridWidth) {
 		fieldContext.moveTo(x, 0);

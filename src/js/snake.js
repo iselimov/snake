@@ -1,41 +1,45 @@
 'use strict'
 
-var SNAKE_POS = {
+
+
+var Snake = function(posX, posY, gridWidth, gridHeight, speed, length, snakeDirectional) {
+	posX = posX || 0;
+	posY = posY || 0;
+	this.gridWidth = gridWidth;
+	this.gridHeight = gridHeight;
+	this.defaultSpeed = 1;
+	this.speed = speed || this.defaultSpeed;
+	this.snakeDirectional = snakeDirectional || this.SNAKE_POS.DOWN;
+	this.generateByLengthAndSnakeDirectional(posX, posY, length);
+};
+
+Snake.prototype.SNAKE_POS = {
 	UP: 0, 
 	DOWN: 1,
 	LEFT: 2,
 	RIGHT: 3
 };
 
-var Snake = function(posX, posY, gridWidth, gridHeigth, speed, length, snakeDirectional) {
-	posX = posX || 0;
-	posY = posY || 0;
-	this.defaultSpeed = 1;
-	this.speed = speed || this.defaultSpeed;
-	this.snakeDirectional = snakeDirectional || SNAKE_POS.DOWN;
-	this.generateByLengthAndSnakeDirectional(posX, posY, length);
-};
-
 Snake.prototype.generateByLengthAndSnakeDirectional = function(posX, posY, length) {
 	this.coords = new Array(length);
 	this.step = this.findStep(this.snakeDirectional);
 	for (var i = 0; i < length; i ++) {
-		this.coords[i] = { x: posX + i * step.x, 
-						   y: posY + i * step.y
+		this.coords[i] = { x: posX - i * this.step.x, 
+						   y: posY - i * this.step.y
  						 };
 	}
 };
 
 Snake.prototype.findStep = function(snakeDirectional) {
 	var step;
-	if (snakeDirectional === SNAKE_POS.UP) {
-		step = {x: 0, y: this.gridHeigth};
-	} else if (snakeDirectional === SNAKE_POS.DOWN) {
-		step = {x: 0, y: -this.gridHeigth};		
-	} else if (snakeDirectional === SNAKE_POS.LEFT) {
-		step = {x: this.gridWidth, y: 0};	
+	if (snakeDirectional === this.SNAKE_POS.UP) {
+		step = {x: 0, y: -this.gridHeight};
+	} else if (snakeDirectional === this.SNAKE_POS.DOWN) {
+		step = {x: 0, y: this.gridHeight};		
+	} else if (snakeDirectional === this.SNAKE_POS.LEFT) {
+		step = {x: -this.gridWidth, y: 0};	
 	} else {
-		step = {x: -this.gridWidth, y: 0};
+		step = {x: this.gridWidth, y: 0};
 	}
 	return step;
 };
@@ -49,18 +53,24 @@ Snake.prototype.setHeadPosition = function(posX, posY) {
 	snake.posY = posY;
 };
 
+Snake.prototype.getCoords = function() {
+	return this.coords;	
+}
+
 Snake.prototype.changeSpeed = function(speed) {
 	snake.speed = speed || snake.defaultSpeed;
 };
-
+	
 Snake.prototype.eat = function() {
 	
 };
 
 Snake.prototype.transform = function(snakeDirectional) {
-	snake.step = snake.snakeDirectional === snakeDirectional ? snake.step : findStep(snakeDirectional);
-	snake.coords.map(function(coord, i) {
-		
-		return { x: coord.x += i * snake.step.x * snake.speed, y: coord.y += i * snake.step.y * snake.speed };
-	});
+	snake.step = snake.snakeDirectional === snakeDirectional ? snake.step : snake.findStep(snakeDirectional);
+	for (var i =  snake.coords.length - 1; i >= 1; i--) {
+		snake.coords[i].x = snake.coords[i - 1].x;		
+		snake.coords[i].y = snake.coords[i - 1].y;		
+	}
+	snake.coords[0].x += snake.step.x;
+	snake.coords[0].y += snake.step.y;
 };
