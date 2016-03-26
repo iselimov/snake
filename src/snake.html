@@ -9,33 +9,20 @@
 <script src="js/snake.js"></script>	
 <script src="js/snakeManager.js"></script>
 <script>
-		
 		'use strict'
 		var gridSize = {
 			width: 50,
 			height: 50
 		};
 		var screenSize = {
-			width: screen.availWidth,
-			height: screen.availHeight
+			width: 800,
+			height: 600
 		};
 		
 		var fieldMng = new FieldManager(screenSize.width, screenSize.height);
 		fieldMng.drawGrid(gridSize.width, gridSize.height);
-		
-		
-		
-		//var gameContext = document.getElementById('snake').getContext('2d');
-				
-		//gameContext.beginPath();
-		//gameContext.rect(50, 50, 50, 50);
-		//gameContext.fillStyle = 'yellow';
-		//gameContext.fill();
-		//gameContext.lineWidth = 7;
-		//gameContext.strokeStyle = 'black';
-		//gameContext.stroke();
-		
-		var snake = new Snake(0, 100, gridSize.width, gridSize.height, 1, 3);
+	
+		var snake = new Snake(screenSize.width / 2, screenSize.height / 2, gridSize.width, gridSize.height, 2, 5);
 		var snakeMng = new SnakeManager(snake, screenSize.width, screenSize.height);
 		snakeMng.start();
 </script>

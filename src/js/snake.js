@@ -1,7 +1,5 @@
 'use strict'
 
-
-
 var Snake = function(posX, posY, gridWidth, gridHeight, speed, length, snakeDirectional) {
 	posX = posX || 0;
 	posY = posY || 0;
@@ -45,12 +43,12 @@ Snake.prototype.findStep = function(snakeDirectional) {
 };
 
 Snake.prototype.getHeadPosition = function() {
-	return { x: snake.posX, y: snake.posY };
+	return { x: this.coords[0].x, y: this.coords[0].y };
 };
 
 Snake.prototype.setHeadPosition = function(posX, posY) {
-	snake.posX = posX;
-	snake.posY = posY;
+	this.coords[0].x = posX;
+	this.coords[0].y = posY;
 };
 
 Snake.prototype.getCoords = function() {
@@ -58,7 +56,7 @@ Snake.prototype.getCoords = function() {
 }
 
 Snake.prototype.changeSpeed = function(speed) {
-	snake.speed = speed || snake.defaultSpeed;
+	this.speed = speed || this.defaultSpeed;
 };
 	
 Snake.prototype.eat = function() {
@@ -66,11 +64,12 @@ Snake.prototype.eat = function() {
 };
 
 Snake.prototype.transform = function(snakeDirectional) {
-	snake.step = snake.snakeDirectional === snakeDirectional ? snake.step : snake.findStep(snakeDirectional);
-	for (var i =  snake.coords.length - 1; i >= 1; i--) {
-		snake.coords[i].x = snake.coords[i - 1].x;		
-		snake.coords[i].y = snake.coords[i - 1].y;		
+	this.step = this.snakeDirectional === snakeDirectional ? this.step : this.findStep(snakeDirectional);
+	this.snakeDirectional = snakeDirectional;
+	for (var i = this.coords.length - 1; i >= 1; i--) {
+		this.coords[i].x = this.coords[i - 1].x;		
+		this.coords[i].y = this.coords[i - 1].y;		
 	}
-	snake.coords[0].x += snake.step.x;
-	snake.coords[0].y += snake.step.y;
+	this.coords[0].x += this.step.x;
+	this.coords[0].y += this.step.y;
 };
