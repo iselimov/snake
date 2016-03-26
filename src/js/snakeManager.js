@@ -10,7 +10,7 @@ var KEY_CODE = {
 var SnakeManager = function(snake, screenWidth, screenHeight) {
 	this.snake = snake;
 	this.refresh(snake.snakeDirectional);
-	this.refreshInterval = 1000;
+	this.refreshInterval = 500;
 	window.onkeydown = this.onKeyDown;
 	
 	var snakeCtx = document.getElementById("snake").getContext("2d");
@@ -80,35 +80,32 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
 
 SnakeManager.prototype.checkBorder = function() {
 	var headPos = this.snake.getHeadPosition();
-	if (headPos.x > this.screenWidth) {
+	if (headPos.x >= this.screenWidth) {
 		this.snake.setHeadPosition(0, headPos.y);
 	} else if (headPos.x < 0) {
-		this.snake.setHeadPosition(this.screenWidth, headPos.y);
-	} else if (headPos.y > this.screenHeight) {
+		this.snake.setHeadPosition(this.screenWidth - this.snake.gridWidth, headPos.y);
+	} else if (headPos.y >= this.screenHeight) {
 		this.snake.setHeadPosition(headPos.x, 0);
 	} else if (headPos.y < 0) {
-		this.snake.setHeadPosition(headPos.x, this.screenHeight);
+		this.snake.setHeadPosition(headPos.x, this.screenHeight - this.snake.gridHeight);
 	}
 };
 
 SnakeManager.prototype.refresh = function(snakeDirectional) {
-	this.checkBorder();
-	var beforeTransformCoords = this.snake.getCoords().slice();
 	this.snake.transform(snakeDirectional);
-	this.redrawSnake(beforeTransformCoords);
+		this.checkBorder();
+	this.redrawSnake();
 };
 
-SnakeManager.prototype.redrawSnake = function(beforeTransformCoords) {
+SnakeManager.prototype.redrawSnake = function() {
 	var snakeContext = document.getElementById("snake").getContext("2d");
-	snakeContext.clearRect(0, 0, 800, 600);
+	snakeContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
 	snakeContext.beginPath();
 	
-	snakeContext.fillStyle = 'green';
+	snakeContext.fillStyle = 'blue';
 	snakeContext.lineWidth = 7;
-	snakeContext.strokeStyle = 'yellow';
-	
-	
-	
+	snakeContext.strokeStyle = 'red';
+		
 	this.snake.getCoords().forEach(function(coord) {
 		snakeContext.rect(coord.x, coord.y, snake.gridWidth, snake.gridHeight);
 		snakeContext.fill();

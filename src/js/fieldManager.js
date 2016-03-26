@@ -18,6 +18,6 @@ FieldManager.prototype.drawGrid = function(gridWidth, gridHeight) {
 		fieldContext.lineTo(this.screenWidth + gridWidth, y);
 	}
 	
-	fieldContext.strokeStyle = "#eee";
+	fieldContext.strokeStyle = "blue";
 	fieldContext.stroke();
 };
