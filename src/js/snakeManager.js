@@ -106,16 +106,10 @@ SnakeManager.prototype.onKeyDown = function(event) {
  * @return true, если была нажата клавиша, которая отвечает за направление, противоположное текущему
  */
 SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
-	if (currentCode === this.KEY_CODE.LEFT && this.keyPressedCode === this.KEY_CODE.RIGHT) {
-		return true;
-	} else if (currentCode === this.KEY_CODE.RIGHT && this.keyPressedCode === this.KEY_CODE.LEFT) {
-		return true;
-	} else if (currentCode === this.KEY_CODE.UP && this.keyPressedCode === this.KEY_CODE.DOWN) {
-		return true;
-	} else if (currentCode === this.KEY_CODE.DOWN && this.keyPressedCode === this.KEY_CODE.UP) {
-		return true;
-	}
-	return false;
+	return currentCode === this.KEY_CODE.LEFT && this.keyPressedCode === this.KEY_CODE.RIGHT 
+		|| currentCode === this.KEY_CODE.RIGHT && this.keyPressedCode === this.KEY_CODE.LEFT
+		|| currentCode === this.KEY_CODE.UP && this.keyPressedCode === this.KEY_CODE.DOWN
+		|| currentCode === this.KEY_CODE.DOWN && this.keyPressedCode === this.KEY_CODE.UP
 };
 /**
  * Отвечает за обработку кадров игры
@@ -125,6 +119,11 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
 SnakeManager.prototype.refresh = function(snakeDirectional) {
 	this.snake.transform(snakeDirectional);
 	this.checkBorder();
+	if (this.snake.wasIntersected()) {
+		this.stop();
+		alert('FUCK!');
+		return;
+	}
 	this.redrawSnake();
 };
 /**
@@ -150,7 +149,7 @@ SnakeManager.prototype.redrawSnake = function() {
 	var snakeContext = document.getElementById("snake").getContext("2d");
 	snakeContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
 	snakeContext.beginPath();
-	
+	// раскраска змеи
 	snakeContext.fillStyle = 'blue';
 	snakeContext.lineWidth = 7;
 	snakeContext.strokeStyle = 'red';

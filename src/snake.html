@@ -9,10 +9,11 @@
 <script src="js/snake.js"></script>	
 <script src="js/snakeManager.js"></script>
 <script>
+		// TODO вынести в отдельный файл игры
 		'use strict'
 		var gridSize = {
-			width: 25,
-			height: 25
+			width: 50,
+			height: 50
 		};
 		var screenSize = {
 			width: 800,
@@ -22,7 +23,7 @@
 		var fieldMng = new FieldManager(screenSize);
 		fieldMng.drawGrid(gridSize);
 	
-		var snake = new Snake(screenSize.width / 2, screenSize.height / 2, gridSize, 5, 1);
+		var snake = new Snake(screenSize.width / 2, screenSize.height / 2, gridSize, 10, 1);
 		var snakeMng = new SnakeManager(snake, screenSize, 5);
 		snakeMng.start();
 </script>

@@ -1,9 +1,18 @@
 'use strict'
 
+/**
+ * 
+ * @param screenSize размеры игрового экрана
+ */
 var FieldManager = function(screenSize) {
 	this.screenWidth = screenSize.width;
 	this.screenHeight = screenSize.height;	
 };
+/**
+ * Отвечает за отрисовку сетки по размерам игрового экрана и сетки
+ *
+ * @param gridSize размеры сетки
+ */
 FieldManager.prototype.drawGrid = function(gridSize) {
 	var fieldContext = document.getElementById("field").getContext("2d");;
 	fieldContext.canvas.width = this.screenWidth;

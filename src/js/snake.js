@@ -87,10 +87,13 @@ Snake.prototype.eat = function() {
 	
 };
 /**
- * 
+ * @return true при столкновении головы змеи с ее частью
  */
 Snake.prototype.wasIntersected = function() {
-	
+	var firstElem = {x: this.coords[0].x, y: this.coords[0].y};
+	return this.coords.some(function(coord, index, array) {
+		return index > 0 && coord.x === firstElem.x && coord.y === firstElem.y
+	});
 };
 /**
  * На каждый кадр игры обновляет координаты змеи в зависимости от ее направления движения
