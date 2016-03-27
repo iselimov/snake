@@ -2,6 +2,12 @@
 
 /**
  * Объект змеи, который содержит в себе координаты и методы их изменения
+ *
+ * @param posX абсцисса головы змеи 
+ * @param posY ордината головы змеи
+ * @param gridSize размер сетки, который определяет размер шага
+ * @param length длина змеи
+ * @param snakeDirectional направление движения змеи
  */
 var Snake = function(posX, posY, gridSize, length, snakeDirectional) {
 	posX = posX || 0;
@@ -12,7 +18,7 @@ var Snake = function(posX, posY, gridSize, length, snakeDirectional) {
 	this.generateByLengthAndSnakeDirectional(posX, posY, length);
 };
 /**
- * Перечисление направлений джвижения земли
+ * Перечисление направлений движения земли
  */
 Snake.prototype.SNAKE_POS = {
 	UP: 1, 
@@ -22,6 +28,10 @@ Snake.prototype.SNAKE_POS = {
 };
 /**
  * Метод генерации змеи по начальным координатам, ее длине и первоначальному направлению
+ *
+ * @param posX абсцисса головы змеи 
+ * @param posY ордината головы змеи
+ * @param length длина змеи
  */
 Snake.prototype.generateByLengthAndSnakeDirectional = function(posX, posY, length) {
 	this.coords = new Array(length);
@@ -56,6 +66,9 @@ Snake.prototype.getHeadPosition = function() {
 };
 /**
  * Устанавливает позицию головы змеи
+ *
+ * @param posX абсцисса головы змеи 
+ * @param posY ордината головы змеи
  */
 Snake.prototype.setHeadPosition = function(posX, posY) {
 	this.coords[0].x = posX;
@@ -81,6 +94,8 @@ Snake.prototype.wasIntersected = function() {
 };
 /**
  * На каждый кадр игры обновляет координаты змеи в зависимости от ее направления движения
+ *
+ * @param snakeDirectional направление движения змеи
  */
 Snake.prototype.transform = function(snakeDirectional) {
 	this.step = this.snakeDirectional === snakeDirectional ? this.step : this.findStep(snakeDirectional);

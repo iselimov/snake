@@ -2,6 +2,10 @@
 
 /**
  * Контроллер змеи, отвечает за цикл движение змеи, обрабатывает события, приходящие от клиента
+ *
+ * @param snake объект змеи
+ * @param screenSize размеры игрового экрана
+ * @param snakeSpeed скорость движения змеи
  */
 var SnakeManager = function(snake, screenSize, snakeSpeed) {
 	this.snake = snake;
@@ -40,6 +44,8 @@ SnakeManager.prototype.start = function() {
 	}, this.refreshInterval);
 };
 /**
+ * @param speed параметрическое значение скорости
+ *
  * @return скорость относительно единицы времени(с.)
  */
 SnakeManager.prototype.countSpeed = function(speed) {
@@ -47,6 +53,8 @@ SnakeManager.prototype.countSpeed = function(speed) {
 };
 /**
  * Позволяет изменить скорость движения змеи, создав новый таймер
+ *
+ * @param speed параметрическое значение скорости
  */
 SnakeManager.prototype.changeSpeed = function(speed) {
 	clearInterval(this.intervalId);
@@ -63,6 +71,8 @@ SnakeManager.prototype.stop = function() {
 };
 /**
  * Обработчик нажатия клавиш, позволяющий изменять направление движения змеи
+ *
+ * @param event событие нажатия клавиши
  */
 SnakeManager.prototype.onKeyDown = function(event) {
 	var snakeDirectional;
@@ -91,6 +101,8 @@ SnakeManager.prototype.onKeyDown = function(event) {
 	}
 };
 /**
+ * @param currentCode код нажатой клавиши
+ * 
  * @return true, если была нажата клавиша, которая отвечает за направление, противоположное текущему
  */
 SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
@@ -107,6 +119,8 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
 };
 /**
  * Отвечает за обработку кадров игры
+ * 
+ * @param snakeDirectional направление движения змеи
  */
 SnakeManager.prototype.refresh = function(snakeDirectional) {
 	this.snake.transform(snakeDirectional);
