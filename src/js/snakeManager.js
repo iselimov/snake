@@ -1,83 +1,122 @@
 'use strict'
 
-var KEY_CODE = {
+/**
+ * Контроллер змеи, отвечает за цикл движение змеи, обрабатывает события, приходящие от клиента
+ */
+var SnakeManager = function(snake, screenSize, snakeSpeed) {
+	this.snake = snake;
+	this.refresh(snake.snakeDirectional);
+	this.refreshInterval = this.countSpeed(snakeSpeed);
+	this.screenWidth = screenSize.width;
+	this.screenHeight = screenSize.height;
+	this.currSnakeDirectional = snake.snakeDirectional;
+	// используется для запоминания клавиш, нажатых пользователем
+	// например, за 1 секунду можно нажать 4 клавиши и все должны быть обработаны
+	this.nextDirectionals = [];
+	var snakeCtx = document.getElementById("snake").getContext("2d");
+	snakeCtx.canvas.width = this.screenWidth;
+	snakeCtx.canvas.height = this.screenHeight;
+	window.onkeydown = this.onKeyDown;
+};
+/**
+ * Перечисление кодов, которые ассоциируются с нажатиями клавиш
+ */
+SnakeManager.prototype.KEY_CODE = {
   LEFT: 37,
   UP: 38,
   RIGHT: 39,
   DOWN: 40
 };
-
-var SnakeManager = function(snake, screenWidth, screenHeight) {
-	this.snake = snake;
-	this.refresh(snake.snakeDirectional);
-	this.refreshInterval = 500;
-	window.onkeydown = this.onKeyDown;
-	
-	var snakeCtx = document.getElementById("snake").getContext("2d");
-	snakeCtx.canvas.width = screenWidth;
-	snakeCtx.canvas.height = screenHeight;
-	this.screenWidth = screenWidth;
-	this.screenHeight = screenHeight;
-};
-
-SnakeManager.prototype.start = function(snakeDirectional) {
+/**
+ * Запускает таймер, отвечающий за движение змеи, проверяя, не запущен ли еще один
+ */
+SnakeManager.prototype.start = function() {
+	if (this.intervalId) {
+		return;
+	}
 	this.intervalId = setInterval(function() {
-	   this.snakeMng.refresh(this.snake.snakeDirectional);
+	   var currSnakeDir = this.snakeMng.nextDirectionals.length > 0 ? this.snakeMng.nextDirectionals.shift() : this.snakeMng.currSnakeDirectional;
+	   this.snakeMng.refresh(currSnakeDir);
 	}, this.refreshInterval);
 };
-
-SnakeManager.prototype.restart = function(snakeDirectional) {
-	if (this.intervalId) {
-		clearInterval(this.intervalId);
-	}
-	this.start(snakeDirectional);		
+/**
+ * @return скорость относительно единицы времени(с.)
+ */
+SnakeManager.prototype.countSpeed = function(speed) {
+	return 1000 / ( speed || 1 );	
 };
-		
+/**
+ * Позволяет изменить скорость движения змеи, создав новый таймер
+ */
+SnakeManager.prototype.changeSpeed = function(speed) {
+	clearInterval(this.intervalId);
+	this.intervalId = null;
+    this.refreshInterval = this.countSpeed(speed);
+	this.start();
+};
+/**
+ * Останавливает таймер, отвечающий за движение змеи
+ */	
 SnakeManager.prototype.stop = function() {
-	clearInterval(snakeManager.intervalId);
+	clearInterval(this.intervalId);
+	this.intervalId = null;
 };
-
+/**
+ * Обработчик нажатия клавиш, позволяющий изменять направление движения змеи
+ */
 SnakeManager.prototype.onKeyDown = function(event) {
 	var snakeDirectional;
 	if (!this.snakeMng.keyPressedCode) {
-		this.snakeMng.keyPressedCode = KEY_CODE.DOWN;
+		this.snakeMng.keyPressedCode = this.snakeMng.KEY_CODE.DOWN;
 	}
 	if (this.snakeMng.keyPressedCode === event.keyCode) {
-		return;
+		return;		
 	}
 	var isOpposeKeyPressed = this.snakeMng.isOpposeKeyPressed(event.keyCode);
 	if (!isOpposeKeyPressed) {
-		if (event.keyCode === KEY_CODE.LEFT) {
+		if (event.keyCode === this.snakeMng.KEY_CODE.LEFT) {
 			snakeDirectional = this.snake.SNAKE_POS.LEFT;
-		} else if (event.keyCode === KEY_CODE.RIGHT) {
+		} else if (event.keyCode === this.snakeMng.KEY_CODE.RIGHT) {
 			snakeDirectional = this.snake.SNAKE_POS.RIGHT;
-		} else if (event.keyCode === KEY_CODE.UP) {
+		} else if (event.keyCode === this.snakeMng.KEY_CODE.UP) {
 			snakeDirectional = this.snake.SNAKE_POS.UP;
-		} else if (event.keyCode === KEY_CODE.DOWN) {
+		} else if (event.keyCode === this.snakeMng.KEY_CODE.DOWN) {
 			snakeDirectional = this.snake.SNAKE_POS.DOWN;
 		} else {
 			return;
 		}
 		this.snakeMng.keyPressedCode = event.keyCode;
-		//this.snakeManager.restart(snakeDirectional);
-		this.snakeMng.refresh(snakeDirectional);
+		this.snakeMng.nextDirectionals.push(snakeDirectional);
+		this.snakeMng.currSnakeDirectional = snakeDirectional;
 	}
-	
 };
-
+/**
+ * @return true, если была нажата клавиша, которая отвечает за направление, противоположное текущему
+ */
 SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
-	if (currentCode === KEY_CODE.LEFT && this.keyPressedCode === KEY_CODE.RIGHT) {
+	if (currentCode === this.KEY_CODE.LEFT && this.keyPressedCode === this.KEY_CODE.RIGHT) {
 		return true;
-	} else if (currentCode === KEY_CODE.RIGHT && this.keyPressedCode === KEY_CODE.LEFT) {
+	} else if (currentCode === this.KEY_CODE.RIGHT && this.keyPressedCode === this.KEY_CODE.LEFT) {
 		return true;
-	} else if (currentCode === KEY_CODE.UP && this.keyPressedCode === KEY_CODE.DOWN) {
+	} else if (currentCode === this.KEY_CODE.UP && this.keyPressedCode === this.KEY_CODE.DOWN) {
 		return true;
-	} else if (currentCode === KEY_CODE.DOWN && this.keyPressedCode === KEY_CODE.UP) {
+	} else if (currentCode === this.KEY_CODE.DOWN && this.keyPressedCode === this.KEY_CODE.UP) {
 		return true;
 	}
 	return false;
 };
-
+/**
+ * Отвечает за обработку кадров игры
+ */
+SnakeManager.prototype.refresh = function(snakeDirectional) {
+	this.snake.transform(snakeDirectional);
+	this.checkBorder();
+	this.redrawSnake();
+};
+/**
+ * Проверяет позицию головы змеи относительно размеров игрового экрана.
+ * В случае выхода за его пределы устанавливает голову змеи на противоположной границе.
+ */
 SnakeManager.prototype.checkBorder = function() {
 	var headPos = this.snake.getHeadPosition();
 	if (headPos.x >= this.screenWidth) {
@@ -90,13 +129,9 @@ SnakeManager.prototype.checkBorder = function() {
 		this.snake.setHeadPosition(headPos.x, this.screenHeight - this.snake.gridHeight);
 	}
 };
-
-SnakeManager.prototype.refresh = function(snakeDirectional) {
-	this.snake.transform(snakeDirectional);
-		this.checkBorder();
-	this.redrawSnake();
-};
-
+/**
+ * Отвечает за отрисовку змеи на экране покоординатно, также очищает предущий кадр контекста змеи
+ */
 SnakeManager.prototype.redrawSnake = function() {
 	var snakeContext = document.getElementById("snake").getContext("2d");
 	snakeContext.clearRect(0, 0, this.screenWidth, this.screenHeight);

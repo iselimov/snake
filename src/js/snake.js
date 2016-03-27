@@ -1,23 +1,28 @@
 'use strict'
 
-var Snake = function(posX, posY, gridWidth, gridHeight, speed, length, snakeDirectional) {
+/**
+ * Объект змеи, который содержит в себе координаты и методы их изменения
+ */
+var Snake = function(posX, posY, gridSize, length, snakeDirectional) {
 	posX = posX || 0;
 	posY = posY || 0;
-	this.gridWidth = gridWidth;
-	this.gridHeight = gridHeight;
-	this.defaultSpeed = 1;
-	this.speed = speed || this.defaultSpeed;
+	this.gridWidth = gridSize.width;
+	this.gridHeight = gridSize.height;
 	this.snakeDirectional = snakeDirectional || this.SNAKE_POS.DOWN;
 	this.generateByLengthAndSnakeDirectional(posX, posY, length);
 };
-
+/**
+ * Перечисление направлений джвижения земли
+ */
 Snake.prototype.SNAKE_POS = {
-	UP: 0, 
-	DOWN: 1,
-	LEFT: 2,
-	RIGHT: 3
+	UP: 1, 
+	DOWN: 2,
+	LEFT: 3,
+	RIGHT: 4
 };
-
+/**
+ * Метод генерации змеи по начальным координатам, ее длине и первоначальному направлению
+ */
 Snake.prototype.generateByLengthAndSnakeDirectional = function(posX, posY, length) {
 	this.coords = new Array(length);
 	this.step = this.findStep(this.snakeDirectional);
@@ -27,7 +32,9 @@ Snake.prototype.generateByLengthAndSnakeDirectional = function(posX, posY, lengt
  						 };
 	}
 };
-
+/**
+ * @return длину шага змеи в зависимости от направления и размеров сетки 
+ */
 Snake.prototype.findStep = function(snakeDirectional) {
 	var step;
 	if (snakeDirectional === this.SNAKE_POS.UP) {
@@ -41,28 +48,40 @@ Snake.prototype.findStep = function(snakeDirectional) {
 	}
 	return step;
 };
-
+/**
+ * @return позицию головы змеи
+ */
 Snake.prototype.getHeadPosition = function() {
 	return { x: this.coords[0].x, y: this.coords[0].y };
 };
-
+/**
+ * Устанавливает позицию головы змеи
+ */
 Snake.prototype.setHeadPosition = function(posX, posY) {
 	this.coords[0].x = posX;
 	this.coords[0].y = posY;
 };
-
+/**
+ * Возвращает координаты змеи
+ */
 Snake.prototype.getCoords = function() {
 	return this.coords;	
 }
-
-Snake.prototype.changeSpeed = function(speed) {
-	this.speed = speed || this.defaultSpeed;
-};
-	
+/**
+ * 
+ */
 Snake.prototype.eat = function() {
 	
 };
-
+/**
+ * 
+ */
+Snake.prototype.wasIntersected = function() {
+	
+};
+/**
+ * На каждый кадр игры обновляет координаты змеи в зависимости от ее направления движения
+ */
 Snake.prototype.transform = function(snakeDirectional) {
 	this.step = this.snakeDirectional === snakeDirectional ? this.step : this.findStep(snakeDirectional);
 	this.snakeDirectional = snakeDirectional;

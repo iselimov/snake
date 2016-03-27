@@ -1,21 +1,21 @@
 'use strict'
 
-var FieldManager = function(screenWidth, screenHeight) {
-	this.screenWidth = screenWidth;
-	this.screenHeight = screenHeight;	
+var FieldManager = function(screenSize) {
+	this.screenWidth = screenSize.width;
+	this.screenHeight = screenSize.height;	
 };
-FieldManager.prototype.drawGrid = function(gridWidth, gridHeight) {
+FieldManager.prototype.drawGrid = function(gridSize) {
 	var fieldContext = document.getElementById("field").getContext("2d");;
 	fieldContext.canvas.width = this.screenWidth;
 	fieldContext.canvas.height = this.screenHeight;
 
-	for (var x = 0; x <= this.screenWidth; x += gridWidth) {
+	for (var x = 0; x <= this.screenWidth; x += gridSize.width) {
 		fieldContext.moveTo(x, 0);
-		fieldContext.lineTo(x, this.screenHeight + gridHeight);
+		fieldContext.lineTo(x, this.screenHeight + gridSize.height);
 	}
-	for (var y = 0; y <= this.screenHeight; y += gridHeight) {
+	for (var y = 0; y <= this.screenHeight; y += gridSize.height) {
 		fieldContext.moveTo(0, y);
-		fieldContext.lineTo(this.screenWidth + gridWidth, y);
+		fieldContext.lineTo(this.screenWidth + gridSize.width, y);
 	}
 	
 	fieldContext.strokeStyle = "blue";
