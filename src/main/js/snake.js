@@ -12,8 +12,7 @@
 var Snake = function(posX, posY, gridSize, length, snakeDirectional) {
 	posX = posX || 0;
 	posY = posY || 0;
-	this.gridWidth = gridSize.width;
-	this.gridHeight = gridSize.height;
+	this.gridSize = gridSize;
 	this.snakeDirectional = snakeDirectional || this.SNAKE_POS.DOWN;
 	this.generateByLengthAndSnakeDirectional(posX, posY, length);
 };
@@ -48,13 +47,13 @@ Snake.prototype.generateByLengthAndSnakeDirectional = function(posX, posY, lengt
 Snake.prototype.findStep = function(snakeDirectional) {
 	var step;
 	if (snakeDirectional === this.SNAKE_POS.UP) {
-		step = {x: 0, y: -this.gridHeight};
+		step = {x: 0, y: -this.gridSize.height};
 	} else if (snakeDirectional === this.SNAKE_POS.DOWN) {
-		step = {x: 0, y: this.gridHeight};		
+		step = {x: 0, y: this.gridSize.height};		
 	} else if (snakeDirectional === this.SNAKE_POS.LEFT) {
-		step = {x: -this.gridWidth, y: 0};	
+		step = {x: -this.gridSize.width, y: 0};	
 	} else {
-		step = {x: this.gridWidth, y: 0};
+		step = {x: this.gridSize.width, y: 0};
 	}
 	return step;
 };
@@ -78,7 +77,7 @@ Snake.prototype.setHeadPosition = function(posX, posY) {
  * Возвращает координаты змеи
  */
 Snake.prototype.getCoords = function() {
-	return this.coords;	
+	return this.coords.slice();	
 }
 /**
  * 
@@ -92,7 +91,7 @@ Snake.prototype.eat = function() {
 Snake.prototype.wasIntersected = function() {
 	var firstElem = {x: this.coords[0].x, y: this.coords[0].y};
 	return this.coords.some(function(coord, index, array) {
-		return index > 0 && coord.x === firstElem.x && coord.y === firstElem.y
+		return index && coord.x === firstElem.x && coord.y === firstElem.y
 	});
 };
 /**

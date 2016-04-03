@@ -9,7 +9,6 @@
  */
 var SnakeManager = function(snake, screenSize, snakeSpeed) {
 	this.snake = snake;
-	this.refresh(snake.snakeDirectional);
 	this.refreshInterval = this.countSpeed(snakeSpeed);
 	this.screenWidth = screenSize.width;
 	this.screenHeight = screenSize.height;
@@ -21,6 +20,8 @@ var SnakeManager = function(snake, screenSize, snakeSpeed) {
 	snakeCtx.canvas.width = this.screenWidth;
 	snakeCtx.canvas.height = this.screenHeight;
 	window.onkeydown = this.onKeyDown;
+	this.onEat = new Publisher();
+	this.foodCoords = [];
 };
 /**
  * Перечисление кодов, которые ассоциируются с нажатиями клавиш
@@ -39,8 +40,8 @@ SnakeManager.prototype.start = function() {
 		return;
 	}
 	this.intervalId = setInterval(function() {
-	   var currSnakeDir = this.snakeMng.nextDirectionals.length > 0 ? this.snakeMng.nextDirectionals.shift() : this.snakeMng.currSnakeDirectional;
-	   this.snakeMng.refresh(currSnakeDir);
+	   var currSnakeDir = this.game.snakeMng.nextDirectionals.length ? this.game.snakeMng.nextDirectionals.shift() : this.game.snakeMng.currSnakeDirectional;
+	   this.game.snakeMng.refresh(currSnakeDir);
 	}, this.refreshInterval);
 };
 /**
@@ -76,28 +77,28 @@ SnakeManager.prototype.stop = function() {
  */
 SnakeManager.prototype.onKeyDown = function(event) {
 	var snakeDirectional;
-	if (!this.snakeMng.keyPressedCode) {
-		this.snakeMng.keyPressedCode = this.snakeMng.KEY_CODE.DOWN;
+	if (!this.game.snakeMng.keyPressedCode) {
+		this.game.snakeMng.keyPressedCode = this.game.snakeMng.KEY_CODE.DOWN;
 	}
-	if (this.snakeMng.keyPressedCode === event.keyCode) {
+	if (this.game.snakeMng.keyPressedCode === event.keyCode) {
 		return;		
 	}
-	var isOpposeKeyPressed = this.snakeMng.isOpposeKeyPressed(event.keyCode);
+	var isOpposeKeyPressed = this.game.snakeMng.isOpposeKeyPressed(event.keyCode);
 	if (!isOpposeKeyPressed) {
-		if (event.keyCode === this.snakeMng.KEY_CODE.LEFT) {
-			snakeDirectional = this.snake.SNAKE_POS.LEFT;
-		} else if (event.keyCode === this.snakeMng.KEY_CODE.RIGHT) {
-			snakeDirectional = this.snake.SNAKE_POS.RIGHT;
-		} else if (event.keyCode === this.snakeMng.KEY_CODE.UP) {
-			snakeDirectional = this.snake.SNAKE_POS.UP;
-		} else if (event.keyCode === this.snakeMng.KEY_CODE.DOWN) {
-			snakeDirectional = this.snake.SNAKE_POS.DOWN;
+		if (event.keyCode === this.game.snakeMng.KEY_CODE.LEFT) {
+			snakeDirectional = this.game.snakeMng.snake.SNAKE_POS.LEFT;
+		} else if (event.keyCode === this.game.snakeMng.KEY_CODE.RIGHT) {
+			snakeDirectional = this.game.snakeMng.snake.SNAKE_POS.RIGHT;
+		} else if (event.keyCode === this.game.snakeMng.KEY_CODE.UP) {
+			snakeDirectional = this.game.snakeMng.snake.SNAKE_POS.UP;
+		} else if (event.keyCode === this.game.snakeMng.KEY_CODE.DOWN) {
+			snakeDirectional = this.game.snakeMng.snake.SNAKE_POS.DOWN;
 		} else {
 			return;
 		}
-		this.snakeMng.keyPressedCode = event.keyCode;
-		this.snakeMng.nextDirectionals.push(snakeDirectional);
-		this.snakeMng.currSnakeDirectional = snakeDirectional;
+		this.game.snakeMng.keyPressedCode = event.keyCode;
+		this.game.snakeMng.nextDirectionals.push(snakeDirectional);
+		this.game.snakeMng.currSnakeDirectional = snakeDirectional;
 	}
 };
 /**
@@ -117,6 +118,7 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
  * @param snakeDirectional направление движения змеи
  */
 SnakeManager.prototype.refresh = function(snakeDirectional) {
+	this.checkEatFood();
 	this.snake.transform(snakeDirectional);
 	this.checkBorder();
 	if (this.snake.wasIntersected()) {
@@ -135,19 +137,30 @@ SnakeManager.prototype.checkBorder = function() {
 	if (headPos.x >= this.screenWidth) {
 		this.snake.setHeadPosition(0, headPos.y);
 	} else if (headPos.x < 0) {
-		this.snake.setHeadPosition(this.screenWidth - this.snake.gridWidth, headPos.y);
+		this.snake.setHeadPosition(this.screenWidth - this.snake.gridSize.width, headPos.y);
 	} else if (headPos.y >= this.screenHeight) {
 		this.snake.setHeadPosition(headPos.x, 0);
 	} else if (headPos.y < 0) {
-		this.snake.setHeadPosition(headPos.x, this.screenHeight - this.snake.gridHeight);
+		this.snake.setHeadPosition(headPos.x, this.screenHeight - this.snake.gridSize.height);
 	}
 };
+
+SnakeManager.prototype.checkEatFood = function() {
+	var headPos = this.snake.getHeadPosition();	
+	var eatFood = this.foodCoords.find(function(foodCoord) {
+		return foodCoord.x === headPos.x && foodCoord.y === headPos.y; 
+	});
+	if (eatFood) {
+		this.onEat.deliver({snakeCoords: this.snake.getCoords(), foodCoord: eatFood});
+	}
+};
+
 /**
  * Отвечает за отрисовку змеи на экране покоординатно, также очищает предущий кадр контекста змеи
  */
 SnakeManager.prototype.redrawSnake = function() {
 	var snakeContext = document.getElementById("snake").getContext("2d");
-	snakeContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
+	snakeContext.clearRect(0, 0, game.snakeMng.screenWidth, game.snakeMng.screenHeight);
 	snakeContext.beginPath();
 	// раскраска змеи
 	snakeContext.fillStyle = 'blue';
@@ -155,8 +168,12 @@ SnakeManager.prototype.redrawSnake = function() {
 	snakeContext.strokeStyle = 'red';
 		
 	this.snake.getCoords().forEach(function(coord) {
-		snakeContext.rect(coord.x, coord.y, snake.gridWidth, snake.gridHeight);
+		snakeContext.rect(coord.x, coord.y, game.snakeMng.snake.gridSize.width, game.snakeMng.snake.gridSize.height);
 		snakeContext.fill();
 		snakeContext.stroke();
 	});
+};
+
+SnakeManager.prototype.refreshFoodCoords = function(foodCoords) {
+	this.foodCoords = foodCoords.slice();
 };

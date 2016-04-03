@@ -6,7 +6,7 @@
  */
 var FieldManager = function(screenSize) {
 	this.screenWidth = screenSize.width;
-	this.screenHeight = screenSize.height;	
+	this.screenHeight = screenSize.height;
 };
 /**
  * Отвечает за отрисовку сетки по размерам игрового экрана и сетки
