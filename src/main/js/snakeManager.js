@@ -118,7 +118,6 @@ SnakeManager.prototype.isOpposeKeyPressed = function(currentCode) {
  * @param snakeDirectional направление движения змеи
  */
 SnakeManager.prototype.refresh = function(snakeDirectional) {
-	this.checkEatFood();
 	this.snake.transform(snakeDirectional);
 	this.checkBorder();
 	if (this.snake.wasIntersected()) {
@@ -126,7 +125,8 @@ SnakeManager.prototype.refresh = function(snakeDirectional) {
 		alert('FUCK!');
 		return;
 	}
-	this.redrawSnake();
+	this.redrawSnake();	
+	this.checkEatFood();
 };
 /**
  * Проверяет позицию головы змеи относительно размеров игрового экрана.

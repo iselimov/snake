@@ -4,7 +4,7 @@
  * Точка входа в игру
  */
 var Game = function() {
-	this.gridSize = { width: 25, height: 25 };
+	this.gridSize = { width: 50, height: 50 };
 	this.screenSize = { width: 800, height: 600 };
 };
 Game.prototype.start = function() {

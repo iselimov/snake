@@ -8,6 +8,9 @@ var FoodManager = function(screenSize, gridSize) {
 	this.foodCount = 1;
 	this.foodCoords = [];
 	this.foodRefreshed = new Publisher();
+	this.foodContext = document.getElementById("food").getContext("2d");
+	this.foodContext.canvas.width = this.screenSize.width;
+	this.foodContext.canvas.height = this.screenSize.height;
 };
 
 FoodManager.prototype.generateFood = function(data) {
@@ -51,19 +54,18 @@ FoodManager.prototype.changeFoodCount = function(foodCount) {
 };
 
 FoodManager.prototype.redrawFood = function() {
-	var foodContext = document.getElementById("food").getContext("2d");
-	foodContext.clearRect(0, 0, this.screenSize.width, this.screenSize.height);
-	foodContext.beginPath();
+	game.foodMng.foodContext.clearRect(0, 0, this.screenSize.width, this.screenSize.height);
+	game.foodMng.foodContext.beginPath();
 	// раскраска змеи
-	foodContext.fillStyle = 'black';
-	foodContext.lineWidth = 7;
-	foodContext.strokeStyle = 'yellow';
+	game.foodMng.foodContext.fillStyle = 'black';
+	game.foodMng.foodContext.lineWidth = 7;
+	game.foodMng.foodContext.strokeStyle = 'yellow';
 		
 	var that = this;
 	this.foodCoords.forEach(function(coord) {
-		foodContext.rect(coord.x, coord.y, that.gridSize.width, that.gridSize.height);
-		foodContext.fill();
-		foodContext.stroke();
+		game.foodMng.foodContext.rect(coord.x, coord.y, that.gridSize.width, that.gridSize.height);
+		game.foodMng.foodContext.fill();
+		game.foodMng.foodContext.stroke();
 	});
 };
 
