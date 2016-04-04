@@ -165,9 +165,9 @@ SnakeManager.prototype.redrawSnake = function() {
 	snakeContext.clearRect(0, 0, game.snakeMng.screenWidth, game.snakeMng.screenHeight);
 	snakeContext.beginPath();
 	// раскраска змеи
-	snakeContext.fillStyle = 'blue';
+	snakeContext.fillStyle = 'aqua';
 	snakeContext.lineWidth = 7;
-	snakeContext.strokeStyle = 'red';
+	snakeContext.strokeStyle = 'black';
 		
 	this.snake.getCoords().forEach(function(coord) {
 		snakeContext.rect(coord.x, coord.y, game.snakeMng.snake.gridSize.width, game.snakeMng.snake.gridSize.height);
