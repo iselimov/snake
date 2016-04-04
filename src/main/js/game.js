@@ -4,7 +4,9 @@
  * Точка входа в игру
  */
 var Game = function() {
+	// размеры сетки
 	this.gridSize = { width: 50, height: 50 };
+	// размеры игрового экрана
 	this.screenSize = { width: 800, height: 600 };
 };
 Game.prototype.start = function() {
@@ -22,7 +24,9 @@ Game.prototype.start = function() {
 	// запускаем движение
 	this.snakeMng.start();
 };
-
+/**
+ * Обработчик события, которое вознакает по генерации еды на поле
+ */
 Game.prototype.refreshFood = function(foodCoords) {
 	game.snakeMng.refreshFoodCoords(foodCoords);	
 };

@@ -21,7 +21,7 @@ var SnakeManager = function(snake, screenSize, snakeSpeed) {
 	snakeCtx.canvas.height = this.screenHeight;
 	window.onkeydown = this.onKeyDown;
 	this.onEat = new Publisher();
-	this.foodCoords = [];
+	this.food = [];
 };
 /**
  * Перечисление кодов, которые ассоциируются с нажатиями клавиш
@@ -122,7 +122,7 @@ SnakeManager.prototype.refresh = function(snakeDirectional) {
 	this.checkBorder();
 	if (this.snake.wasIntersected()) {
 		this.stop();
-		alert('FUCK!');
+		alert('Game over!');
 		return;
 	}
 	this.redrawSnake();	
@@ -144,17 +144,19 @@ SnakeManager.prototype.checkBorder = function() {
 		this.snake.setHeadPosition(headPos.x, this.screenHeight - this.snake.gridSize.height);
 	}
 };
-
+/**
+ * Проверяет пересечение головы змеи с едой, активирует событие в случае успеха
+ */
 SnakeManager.prototype.checkEatFood = function() {
 	var headPos = this.snake.getHeadPosition();	
-	var eatFood = this.foodCoords.find(function(foodCoord) {
-		return foodCoord.x === headPos.x && foodCoord.y === headPos.y; 
+	var eatFood = this.food.find(function(elem) {
+		return elem.coord.x === headPos.x && elem.coord.y === headPos.y; 
 	});
 	if (eatFood) {
-		this.onEat.deliver({snakeCoords: this.snake.getCoords(), foodCoord: eatFood});
+		this.snake.eat(eatFood);
+		this.onEat.deliver({snakeCoords: this.snake.getCoords(), foodCoord: eatFood.coord});
 	}
 };
-
 /**
  * Отвечает за отрисовку змеи на экране покоординатно, также очищает предущий кадр контекста змеи
  */
@@ -173,7 +175,11 @@ SnakeManager.prototype.redrawSnake = function() {
 		snakeContext.stroke();
 	});
 };
-
-SnakeManager.prototype.refreshFoodCoords = function(foodCoords) {
-	this.foodCoords = foodCoords.slice();
+/**
+ * Устанавливает массив объектов еды
+ *
+ * @param food массив с едой
+ */
+SnakeManager.prototype.refreshFoodCoords = function(food) {
+	this.food = food.slice();
 };

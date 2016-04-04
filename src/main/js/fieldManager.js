@@ -1,7 +1,8 @@
 'use strict'
 
 /**
- * 
+ * Объект, отвечаеющий за отрисовку игрового поля игры
+ *
  * @param screenSize размеры игрового экрана
  */
 var FieldManager = function(screenSize) {

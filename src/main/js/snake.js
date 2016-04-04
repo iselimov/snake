@@ -80,9 +80,19 @@ Snake.prototype.getCoords = function() {
 	return this.coords.slice();	
 }
 /**
- * 
+ * Добавляет новые координаты змейке в хвост в зависимости от параметра еды 'growth'
+ *
+ * @param eatFood объект еды, который попал под раздачу
  */
-Snake.prototype.eat = function() {
+Snake.prototype.eat = function(eatFood) {
+	var coordsLength = this.coords.length;
+	var lastCoord = this.coords[coordsLength - 1];
+	var tailStep = { x: lastCoord.x - this.coords[coordsLength - 2].x,
+					 y: lastCoord.y - this.coords[coordsLength - 2].y };
+	for (var i = 0; i < eatFood.growth; i ++) {
+		this.coords.push({ x: this.coords[coordsLength - 1].x + tailStep.x, 
+						   y: this.coords[coordsLength - 1].y +  tailStep.y });
+	}
 	
 };
 /**
