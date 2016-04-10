@@ -21,6 +21,7 @@ var SnakeManager = function(snake, screenSize, snakeSpeed) {
 	snakeCtx.canvas.height = this.screenHeight;
 	window.onkeydown = this.onKeyDown;
 	this.onEat = new Publisher();
+	this.onDie = new Publisher();
 	this.food = [];
 };
 /**
@@ -122,7 +123,7 @@ SnakeManager.prototype.refresh = function(snakeDirectional) {
 	this.checkBorder();
 	if (this.snake.wasIntersected()) {
 		this.stop();
-		alert('Game over!');
+		this.onDie.deliver();
 		return;
 	}
 	this.redrawSnake();	
@@ -182,4 +183,15 @@ SnakeManager.prototype.redrawSnake = function() {
  */
 SnakeManager.prototype.refreshFoodCoords = function(food) {
 	this.food = food.slice();
+};
+/**
+ * Очищаем издателей событий
+ */ 
+SnakeManager.prototype.flush = function() {
+	if (this.onEat) {
+		this.onEat = null;
+	}
+	if (this.onDie) {
+		this.onDie = null;
+	}
 };

@@ -17,6 +17,7 @@ var FoodManager = function(screenSize, gridSize) {
 	this.foodContext = document.getElementById("food").getContext("2d");
 	this.foodContext.canvas.width = this.screenSize.width;
 	this.foodContext.canvas.height = this.screenSize.height;
+
 };
 /**
  * Генерирует новый объект еды
@@ -90,4 +91,11 @@ FoodManager.prototype.redrawFood = function() {
 		game.foodMng.foodContext.stroke();
 	});
 };
-
+/**
+ * Очищаем издателя события
+ */ 
+FoodManager.prototype.flush = function() {
+	if (this.foodRefreshed) {
+		this.foodRefreshed = null;
+	}
+};
